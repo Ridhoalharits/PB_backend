@@ -2,6 +2,9 @@ const express = require("express");
 const axios = require("axios");
 const { Pool } = require("pg");
 const app = express();
+const cors = require("cors");
+
+app.use(cors());
 
 // const pool = new Pool({
 //   user: "postgres",
@@ -64,6 +67,9 @@ async function savetodb() {
     console.log("datanya sama cuy");
   }
 }
+setInterval(() => {
+  savetodb();
+}, 5000);
 
 // app.post("/save", async (req, res) => {
 //   try {
