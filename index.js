@@ -126,10 +126,50 @@ async function getAllData() {
   }
 }
 
+async function getAllDanger() {
+  try {
+    // Connect to PostgreSQL database
+    const client = await pool.connect();
+
+    // Query to fetch historical weather data from the node1 table
+    const query = "SELECT * FROM device_log WHERE btn = 1";
+
+    // Execute the query
+    const result = await client.query(query);
+
+    // Fetch the historical weather data
+    const historicalData = result.rows;
+
+    // Release the database connection
+    client.release();
+
+    return historicalData;
+  } catch (error) {
+    console.error(
+      "Error fetching historical weather data from PostgreSQL:",
+      error
+    );
+    throw error;
+  }
+}
+
 app.get("/ambil", async (req, res) => {
   try {
     // Fetch historical weather data from PostgreSQL
     const historicalData = await getAllData();
+
+    // Send the historical weather data as JSON response
+    res.json(historicalData);
+  } catch (error) {
+    console.error("Error fetching historical weather data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/getalldanger", async (req, res) => {
+  try {
+    // Fetch historical weather data from PostgreSQL
+    const historicalData = await getAllDanger();
 
     // Send the historical weather data as JSON response
     res.json(historicalData);
