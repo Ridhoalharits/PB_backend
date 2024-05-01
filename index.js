@@ -18,6 +18,10 @@ const pool = new Pool({
 
 // Define your route
 
+app.get("/", (req, res) => {
+  res.send("standby");
+});
+
 let lastTimestamp = null;
 
 async function savetodb() {
@@ -60,9 +64,6 @@ async function savetodb() {
     console.log("datanya sama cuy");
   }
 }
-setInterval(() => {
-  savetodb();
-}, 2000);
 
 // app.post("/save", async (req, res) => {
 //   try {
