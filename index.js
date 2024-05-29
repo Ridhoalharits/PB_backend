@@ -3,24 +3,11 @@ const axios = require("axios");
 const { Pool } = require("pg");
 const app = express();
 const cors = require("cors");
-
 app.use(cors());
-
-// const pool = new Pool({
-//   user: "postgres",
-//   host: "localhost",
-//   database: "postgres",
-//   password: "ridho1382",
-//   port: 5432,
-// });
-
 const pool = new Pool({
   connectionString:
     "postgres://default:xnqLSI9kFY8a@ep-ancient-cake-a1sq6ks9-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require",
 });
-
-// Define your route
-
 app.get("/", (req, res) => {
   res.send("standby");
 });
@@ -31,7 +18,7 @@ async function savetodb() {
   const client = await pool.connect();
   //fetching
   const apiUrl =
-    "https://api.qubitro.com/v2/projects/b9aabf51-edf2-4885-b211-8a424cb55208/devices/d0b022b0-a221-4599-82a7-9307c21fb97f/data?page=1&limit=1&range=all";
+    "https://api.qubitro.com/v2/projects/b9aabf51-edf2-4885-b211-8a424cb55208/devices/f7566774-46ea-4b09-bb19-63fd19699594/data?page=1&limit=1&range=all";
 
   // Make GET request to Qubitro API
   const response = await fetch(apiUrl, {
@@ -42,7 +29,11 @@ async function savetodb() {
     .then((respon) => respon.json())
     .then(({ data }) => data);
 
-  // const toPush = JSON.stringify(response[0]);
+  const result = await pool.query(
+    "SELECT timestamp FROM device_log ORDER BY id DESC LIMIT 1"
+  );
+  const lastTimestamp = result.rows.length ? result.rows[0].timestamp : null;
+
   const timestamp = response[0].time;
 
   if (timestamp !== lastTimestamp) {
@@ -69,35 +60,7 @@ async function savetodb() {
 }
 setInterval(() => {
   savetodb();
-}, 5000);
-
-// app.post("/save", async (req, res) => {
-//   try {
-//     const apiUrl =
-//       "https://api.qubitro.com/v2/projects/b9aabf51-edf2-4885-b211-8a424cb55208/devices/d0b022b0-a221-4599-82a7-9307c21fb97f/data?page=1&limit=1&range=all";
-
-//     // Make GET request to Qubitro API
-//     const response = await fetch(apiUrl, {
-//       headers: {
-//         Authorization: "Bearer QB_BzKTp5dhQP3--u1T9q1MYcpYJTO4reb4IY81Qax-",
-//       },
-//     })
-//       .then((respon) => respon.json())
-//       .then(({ data }) => data);
-
-//     const result = savetodb(response[0]).then(() =>
-//       console.log("Data saved to Node3 PostgreSQL successfully")
-//     );
-//     // Extract data from response
-
-//     // Send the data as response
-//     res.send(response[0]);
-//   } catch (error) {
-//     // Handle error if request fails
-//     console.error("Error fetching data from Qubitro API:", error);
-//     res.status(500).send("Error fetching data from Qubitro API");
-//   }
-// });
+}, 3000);
 
 async function getAllData() {
   try {
@@ -186,3 +149,38 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "localhost",
+//   database: "postgres",
+//   password: "ridho1382",
+//   port: 5432,
+// });
+// app.post("/save", async (req, res) => {
+//   try {
+//     const apiUrl =
+//       "https://api.qubitro.com/v2/projects/b9aabf51-edf2-4885-b211-8a424cb55208/devices/d0b022b0-a221-4599-82a7-9307c21fb97f/data?page=1&limit=1&range=all";
+
+//     // Make GET request to Qubitro API
+//     const response = await fetch(apiUrl, {
+//       headers: {
+//         Authorization: "Bearer QB_BzKTp5dhQP3--u1T9q1MYcpYJTO4reb4IY81Qax-",
+//       },
+//     })
+//       .then((respon) => respon.json())
+//       .then(({ data }) => data);
+
+//     const result = savetodb(response[0]).then(() =>
+//       console.log("Data saved to Node3 PostgreSQL successfully")
+//     );
+//     // Extract data from response
+
+//     // Send the data as response
+//     res.send(response[0]);
+//   } catch (error) {
+//     // Handle error if request fails
+//     console.error("Error fetching data from Qubitro API:", error);
+//     res.status(500).send("Error fetching data from Qubitro API");
+//   }
+// });
