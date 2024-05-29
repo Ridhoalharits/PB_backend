@@ -73,7 +73,8 @@ async function getAllData() {
     const client = await pool.connect();
 
     // Query to fetch historical weather data from the node1 table
-    const query = "SELECT * FROM public.device_log";
+    // const query = "SELECT * FROM public.device_log";
+    const query = "SELECT * FROM device_log ORDER BY id DESC";
 
     // Execute the query
     const result = await client.query(query);
