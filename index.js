@@ -30,11 +30,15 @@ async function savetodb() {
     .then(({ data }) => data);
 
   const result = await pool.query(
-    "SELECT timestamp FROM device_log ORDER BY id DESC LIMIT 1"
+    `SELECT timestamp, TO_CHAR(timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') as formatted_timestamp  FROM device_log ORDER BY id DESC LIMIT 1`
   );
-  const lastTimestamp = result.rows.length ? result.rows[0].timestamp : null;
+  let lastTimestamp = result.rows.length
+    ? result.rows[0].formatted_timestamp
+    : null;
 
   const timestamp = response[0].time;
+  console.log(lastTimestamp);
+  console.log(timestamp);
 
   if (timestamp !== lastTimestamp) {
     const values = [
