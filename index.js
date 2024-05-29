@@ -35,12 +35,13 @@ async function savetodb() {
   let lastTimestamp = result.rows.length
     ? result.rows[0].formatted_timestamp
     : null;
+  let invalidLocation = result.rows[1];
 
   const timestamp = response[0].time;
   console.log(lastTimestamp);
   console.log(timestamp);
 
-  if (timestamp !== lastTimestamp) {
+  if (timestamp !== lastTimestamp && invalidLocation !== 0) {
     const values = [
       response[0].data.Lat,
       response[0].data.Lon,
@@ -59,7 +60,7 @@ async function savetodb() {
     lastTimestamp = timestamp;
     return result;
   } else {
-    console.log("datanya sama cuy");
+    console.log("Invalid To Push");
   }
 }
 setInterval(() => {
