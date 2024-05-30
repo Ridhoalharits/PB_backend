@@ -12,8 +12,6 @@ app.get("/", (req, res) => {
   res.send("standby");
 });
 
-let lastTimestamp = null;
-
 async function savetodb() {
   const client = await pool.connect();
   //fetching
@@ -65,7 +63,7 @@ async function savetodb() {
 }
 setInterval(() => {
   savetodb();
-}, 3000);
+}, 4000);
 
 async function getAllData() {
   try {
